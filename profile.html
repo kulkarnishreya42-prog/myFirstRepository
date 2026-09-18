@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shreya Kulkarni — Scrum Master and Project Manager portfolio." />
+  <title>Shreya Kulkarni | Portfolio</title>
+  <style>
+    :root{
+      --ink:#17243f; --muted:#667085; --blue:#2563eb; --blue2:#4f7cff;
+      --pale:#eef4ff; --line:#e7ebf2; --white:#fff; --bg:#fbfcff;
+      --shadow:0 18px 50px rgba(23,36,63,.08); --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.65}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+    nav{position:sticky;top:0;z-index:20;background:rgba(251,252,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(231,235,242,.8)}
+    .nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:850;letter-spacing:-.03em;font-size:1.08rem}
+    .brand span{color:var(--blue)}
+    .links{display:flex;gap:28px;font-size:.92rem;color:#475467;font-weight:650}
+    .links a:hover{color:var(--blue)}
+    .hero{padding:92px 0 76px;position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,#dce8ff 0%,rgba(220,232,255,0) 70%);right:-90px;top:-100px;z-index:-1}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--pale);color:var(--blue);padding:7px 12px;border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    h1{font-size:clamp(3.2rem,8vw,6.5rem);line-height:.94;letter-spacing:-.065em;margin:24px 0 20px;max-width:900px}
+    .gradient{background:linear-gradient(100deg,var(--blue),#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:1.2rem;color:var(--muted);max-width:720px;margin:0 0 30px}
+    .actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 18px;border-radius:12px;font-weight:750;font-size:.92rem;border:1px solid var(--line);background:white;transition:.2s}
+    .btn.primary{background:var(--ink);color:white;border-color:var(--ink)}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(23,36,63,.1)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:62px}
+    .stat{padding:22px;border:1px solid var(--line);background:rgba(255,255,255,.75);border-radius:18px}
+    .stat b{font-size:1.5rem;display:block;letter-spacing:-.04em}.stat span{color:var(--muted);font-size:.86rem}
+    section{padding:82px 0}
+    .section-head{display:grid;grid-template-columns:1fr 2fr;gap:50px;margin-bottom:42px}
+    .kicker{font-size:.78rem;color:var(--blue);font-weight:850;text-transform:uppercase;letter-spacing:.12em}
+    h2{font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.045em;line-height:1.05;margin:8px 0}
+    .section-copy{color:var(--muted);font-size:1.05rem;margin:4px 0 0}
+    .experience{display:grid;gap:16px}
+    .role{display:grid;grid-template-columns:210px 1fr;gap:36px;padding:30px;background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 6px 24px rgba(23,36,63,.035)}
+    .role .date{font-size:.84rem;color:var(--muted);font-weight:650}
+    .role h3{font-size:1.35rem;margin:0 0 2px;letter-spacing:-.025em}.company{color:var(--blue);font-weight:750}
+    .role p,.role ul{color:#596579;margin-bottom:0}.role ul{padding-left:18px}
+    .compact .role{padding:22px 30px}.compact .role p{margin-top:7px}
+    .skill-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+    .card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:30px}
+    .card h3{margin-top:0;font-size:1.15rem}.chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{background:#f6f8fc;border:1px solid #e8ecf3;padding:8px 12px;border-radius:999px;font-size:.86rem;font-weight:650;color:#4b5870}
+    .cert{display:flex;gap:13px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}.cert:last-child{border:0}
+    .check{width:28px;height:28px;border-radius:9px;background:var(--pale);color:var(--blue);display:grid;place-items:center;font-weight:900;flex:none}
+    .edu{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .edu .card small{color:var(--blue);font-weight:800}.edu h3{margin:8px 0 4px}.edu p{color:var(--muted);margin:0}
+    .contact{background:var(--ink);color:white;border-radius:30px;padding:52px;display:flex;align-items:center;justify-content:space-between;gap:30px}
+    .contact h2{margin:0 0 10px}.contact p{color:#b8c2d6;max-width:580px;margin:0}.contact .btn{border-color:rgba(255,255,255,.16)}
+    footer{padding:34px 0 48px;color:#8a94a7;font-size:.84rem;display:flex;justify-content:space-between}
+    @media(max-width:760px){
+      .links{display:none}.hero{padding-top:62px}.stats,.section-head,.skill-grid,.edu{grid-template-columns:1fr}.section-head{gap:12px}.role{grid-template-columns:1fr;gap:8px}.contact{padding:34px;align-items:flex-start;flex-direction:column}footer{gap:10px;flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav">
+    <a class="brand" href="#top">Shreya<span>.</span></a>
+    <div class="links">
+      <a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#education">Education</a><a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Scrum Master · Project Manager</div>
+      <h1>I turn complex work into <span class="gradient">clear, aligned delivery.</span></h1>
+      <p class="lead">Hi, I’m Shreya Kulkarni — a Certified ScrumMaster and SAFe® Agilist experienced in agile delivery, stakeholder alignment, cross-functional collaboration and process improvement.</p>
+      <div class="actions">
+        <a class="btn primary" href="#experience">Explore my experience ↓</a>
+        <a class="btn" href="mailto:kulkarnishreya42@gmail.com">Email me</a>
+        <a class="btn" href="https://www.linkedin.com/in/shreya-kulkarni-0694a1137" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>7+ yrs</b><span>Career experience across delivery and agile roles</span></div>
+        <div class="stat"><b>CSM</b><span>Certified ScrumMaster</span></div>
+        <div class="stat"><b>SAFe®</b><span>Certified SAFe® Agilist</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="about">
+    <div class="wrap section-head">
+      <div><div class="kicker">About</div><h2>People, process & progress.</h2></div>
+      <p class="section-copy">Most recently, I served as a Scrum Master at Zelis, facilitating agile processes and helping cross-functional teams collaborate effectively. My work centers on removing delivery friction, improving workflows, creating accountability through Scrum ceremonies, and building productive team environments.</p>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="kicker">Experience</div><h2>Building momentum across teams.</h2></div>
+        <p class="section-copy">Experience spanning Scrum leadership, project delivery, stakeholder management, risk mitigation and cross-functional execution.</p>
+      </div>
+      <div class="experience">
+        <article class="role">
+          <div><div class="date">APR 2025 — MAR 2026</div><div class="date">1 year</div></div>
+          <div><h3>Scrum Master</h3><div class="company">Zelis</div><ul><li>Facilitated Scrum ceremonies to strengthen transparency and accountability.</li><li>Partnered with cross-functional teams to address challenges and streamline workflows.</li><li>Applied agile methodologies and team-dynamics practices to support productive delivery.</li></ul></div>
+        </article>
+        <article class="role">
+          <div><div class="date">JUN 2021 — FEB 2025</div><div class="date">Hyderabad, India</div></div>
+          <div><h3>Project Manager · Scrum Master</h3><div class="company">Ivy</div><ul><li>Drove end-to-end delivery while managing multiple priorities in a fast-paced environment.</li><li>Led stakeholder communication, alignment and project status updates.</li><li>Collaborated with engineering and product teams to plan and deliver against timelines and requirements.</li><li>Tracked cross-functional progress, identified risks early and supported mitigation.</li><li>Improved processes and communication frameworks for smoother project rollouts.</li></ul></div>
+        </article>
+      </div>
+
+      <div class="experience compact" style="margin-top:16px">
+        <article class="role"><div class="date">NOV 2019 — JAN 2021</div><div><h3>Scrum Master</h3><div class="company">Aditya Birla Capital</div></div></article>
+        <article class="role"><div><div class="date">MAY 2018 — NOV 2019</div><div class="date">Hyderabad, India</div></div><div><h3>Scrum Master</h3><div class="company">IDFC FIRST Bank</div></div></article>
+        <article class="role"><div><div class="date">MAY — JUN 2017</div><div class="date">Hyderabad, India</div></div><div><h3>Internship</h3><div class="company">T.I.M.E.</div></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="kicker">Capabilities</div><h2>How I work.</h2></div>
+        <p class="section-copy">A practical toolkit for creating alignment, improving delivery and helping teams move from ambiguity to execution.</p>
+      </div>
+      <div class="skill-grid">
+        <div class="card">
+          <h3>Core skills & tools</h3>
+          <div class="chips"><span class="chip">Project Management</span><span class="chip">Change Management</span><span class="chip">Microsoft Excel</span><span class="chip">Jira</span><span class="chip">Confluence</span><span class="chip">PI Planning</span><span class="chip">Agile Methodologies</span><span class="chip">Stakeholder Management</span><span class="chip">Risk Mitigation</span><span class="chip">Cross-functional Delivery</span></div>
+        </div>
+        <div class="card">
+          <h3>Certifications</h3>
+          <div class="cert"><div class="check">✓</div><div><strong>Certified ScrumMaster</strong><br><small>CSM</small></div></div>
+          <div class="cert"><div class="check">✓</div><div><strong>Certified SAFe® Agilist</strong><br><small>Scaled Agile</small></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="kicker">Education</div><h2>Business meets technology.</h2></div>
+        <p class="section-copy">A foundation spanning information technology, human resources and marketing.</p>
+      </div>
+      <div class="edu">
+        <div class="card"><small>2016 — 2018</small><h3>Institute of Public Enterprise</h3><p>Master of Business Administration · Human Resources & Marketing</p></div>
+        <div class="card"><small>2011 — 2015</small><h3>ACE Engineering College</h3><p>Bachelor of Technology · Information Technology</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact">
+        <div><div class="kicker" style="color:#8fb3ff">Let’s connect</div><h2>Have a role, project or conversation in mind?</h2><p>I’m always interested in conversations around agile delivery, program execution, product collaboration and building high-performing teams.</p></div>
+        <div class="actions"><a class="btn primary" style="background:white;color:#17243f;border-color:white" href="mailto:kulkarnishreya42@gmail.com">Get in touch →</a><a class="btn" style="background:transparent;color:white" href="https://www.linkedin.com/in/shreya-kulkarni-0694a1137" target="_blank" rel="noopener">LinkedIn</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="wrap"><span>© 2026 Shreya Kulkarni</span><span>Scrum Master · Project Manager · SAFe® Agilist</span></footer>
+</body>
+</html>
