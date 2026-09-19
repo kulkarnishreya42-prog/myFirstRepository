@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Simulator | Learn Retrieval-Augmented Generation</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #6f7890;
+      --primary: #635bff;
+      --primary-soft: #efefff;
+      --green: #18a66a;
+      --green-soft: #eaf9f2;
+      --orange: #f59e0b;
+      --orange-soft: #fff7e7;
+      --border: #e7eaf1;
+      --shadow: 0 10px 35px rgba(30, 40, 70, 0.08);
+    }
+
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #14172b, #29285d);
+      color: white;
+      padding: 48px 24px 70px;
+      text-align: center;
+    }
+
+    header .badge {
+      display: inline-block;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      font-size: 12px;
+      letter-spacing: .5px;
+      margin-bottom: 16px;
+    }
+
+    header h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: #c9cbe0;
+      max-width: 650px;
+      margin: auto;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: -35px auto 60px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .intro h2 {
+      margin-bottom: 7px;
+    }
+
+    .intro p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 260px;
+    }
+
+    .progress span {
+      height: 7px;
+      flex: 1;
+      background: #e8eaf2;
+      border-radius: 20px;
+      transition: .3s;
+    }
+
+    .progress span.active {
+      background: var(--primary);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      gap: 8px;
+      margin: 24px 0;
+    }
+
+    .pipe-node {
+      text-align: center;
+      padding: 14px 8px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      font-size: 13px;
+      background: white;
+      transition: .25s;
+    }
+
+    .pipe-node.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+      transform: translateY(-2px);
+    }
+
+    .arrow {
+      text-align: center;
+      color: #a5abc0;
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .step {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      font-weight: 700;
+    }
+
+    .section-title h3 {
+      margin-bottom: 3px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fbfcff;
+      padding: 13px;
+      border-radius: 11px;
+      outline: none;
+      font: inherit;
+      color: var(--text);
+      transition: .2s;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 91, 255, .09);
+    }
+
+    textarea {
+      min-height: 135px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 18px rgba(99,91,255,.25);
+    }
+
+    .secondary {
+      background: #eef0f6;
+      color: #424b63;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .chunks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .chunk {
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 14px;
+      background: #fafbfe;
+      transition: .25s;
+    }
+
+    .chunk.retrieved {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .chunk-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+
+    .chunk-id {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .score {
+      font-size: 11px;
+      padding: 4px 8px;
+      background: #edf0f6;
+      border-radius: 20px;
+    }
+
+    .chunk p {
+      font-size: 13px;
+      color: #555f76;
+      line-height: 1.55;
+    }
+
+    .vector {
+      margin-top: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      color: #7b8398;
+      background: white;
+      padding: 8px;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+
+    .callout {
+      border-left: 4px solid var(--orange);
+      background: var(--orange-soft);
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .context-box {
+      background: #15182b;
+      color: #e5e8ff;
+      border-radius: 13px;
+      padding: 18px;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      min-height: 120px;
+    }
+
+    .answer {
+      border: 1px solid #bfead6;
+      background: var(--green-soft);
+      padding: 18px;
+      border-radius: 13px;
+      line-height: 1.7;
+    }
+
+    .answer strong {
+      color: #08764a;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 7px;
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    .phase {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .concept {
+      margin-top: 24px;
+      background: #171a2f;
+      color: white;
+    }
+
+    .concept p {
+      color: #c6cadc;
+      line-height: 1.7;
+    }
+
+    .concept-flow {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .concept-flow span {
+      padding: 9px 12px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.08);
+      font-size: 13px;
+    }
+
+    .concept-flow b {
+      color: #8f89ff;
+    }
+
+    @media (max-width: 800px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .progress {
+        width: 100%;
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="badge">INTERACTIVE AI LEARNING LAB</div>
+  <h1>RAG Simulator</h1>
+  <p>
+    Learn Retrieval-Augmented Generation by building a knowledge base,
+    creating embeddings, retrieving relevant chunks and sending context
+    to an LLM.
+  </p>
+</header>
+
+<main class="container">
+
+  <div class="card intro">
+    <div>
+      <h2>Build a RAG pipeline</h2>
+      <p>
+        Follow the pipeline from raw knowledge to the final AI-generated answer.
+      </p>
+    </div>
+
+    <div class="progress">
+      <span id="prog1"></span>
+      <span id="prog2"></span>
+      <span id="prog3"></span>
+      <span id="prog4"></span>
+    </div>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipe-node" id="node-doc">📄 Documents</div>
+    <div class="arrow">→</div>
+    <div class="pipe-node" id="node-chunk">✂️ Chunks</div>
+    <div class="arrow">→</div>
+    <div class="pipe-node" id="node-vector">🔢 Embeddings</div>
+    <div class="arrow">→</div>
+    <div class="pipe-node" id="node-db">🗄️ Vector DB</div>
+  </div>
+
+  <!-- STEP 1 -->
+
+  <section class="card section">
+    <div class="phase">Phase 1 · Indexing</div>
+
+    <div class="section-title">
+      <div class="step">1</div>
+      <div>
+        <h3>Create the Knowledge Base</h3>
+        <p>
+          RAG first needs information it can retrieve later. Paste a document
+          below or use the example.
+        </p>
+      </div>
+    </div>
+
+    <textarea id="knowledge">
+PayPal allows customers to send and receive money online.
+
+PayPal refunds can take approximately 3 to 5 business days to appear depending on the payment method and financial institution.
+
+PayPal transaction fees depend on the transaction type, country, currency and whether the payment is domestic or international.
+
+Users can close their PayPal account from account settings after resolving pending transactions and balances.
+
+PayPal provides buyer protection for certain eligible purchases when requirements are met.</textarea>
+
+    <div class="controls">
+      <button class="primary" onclick="createChunks()">Create Chunks →</button>
+      <button class="secondary" onclick="resetSimulator()">Reset</button>
+    </div>
+
+    <div class="callout">
+      <strong>Important:</strong> This step is called
+      <strong>indexing / ingestion</strong>, not retrieval.
+      The knowledge base is prepared before the user asks a question.
+    </div>
+
+    <div id="chunkSection" class="hidden">
+      <hr class="divider">
+
+      <span class="mini-label">DOCUMENT CHUNKS</span>
+      <div id="chunks" class="chunks"></div>
+
+      <div class="controls">
+        <button class="primary" onclick="generateEmbeddings()">
+          Generate Embeddings →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+
+  <section id="embeddingSection" class="card section hidden">
+    <div class="phase">Phase 1 · Indexing</div>
+
+    <div class="section-title">
+      <div class="step">2</div>
+      <div>
+        <h3>Convert chunks into embeddings</h3>
+        <p>
+          Each chunk is represented as a numerical vector capturing aspects
+          of its semantic meaning.
+        </p>
+      </div>
+    </div>
+
+    <div id="embeddingChunks" class="chunks"></div>
+
+    <div class="callout">
+      The vectors shown here are <strong>simulated for learning purposes</strong>.
+      Real embedding models often produce hundreds or thousands of dimensions.
+    </div>
+
+    <div class="controls">
+      <button class="primary" onclick="storeVectors()">
+        Store in Vector Database →
+      </button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+
+  <section id="querySection" class="card section hidden">
+    <div class="phase">Phase 2 · Retrieval</div>
+
+    <div class="section-title">
+      <div class="step">3</div>
+      <div>
+        <h3>User asks a question</h3>
+        <p>
+          Now retrieval begins. The user's question is also converted into
+          an embedding and compared against the stored chunk embeddings.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <label class="mini-label">USER QUESTION</label>
+        <input
+          id="query"
+          value="How long does a PayPal refund take?"
+        >
+      </div>
+
+      <div>
+        <label class="mini-label">TOP-K CHUNKS TO RETRIEVE</label>
+        <select id="topK">
+          <option value="1">Top 1</option>
+          <option value="2" selected>Top 2</option>
+          <option value="3">Top 3</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="primary" onclick="retrieveChunks()">
+        Convert Query + Retrieve →
+      </button>
+    </div>
+
+    <div id="queryVectorArea" class="hidden">
+      <hr class="divider">
+
+      <span class="mini-label">SIMULATED QUERY EMBEDDING</span>
+      <div id="queryVector" class="vector"></div>
+
+      <br>
+
+      <span class="mini-label">SIMILARITY SEARCH RESULTS</span>
+      <div id="retrievalResults" class="chunks"></div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+
+  <section id="contextSection" class="card section hidden">
+    <div class="phase">Phase 3 · Augmentation</div>
+
+    <div class="section-title">
+      <div class="step">4</div>
+      <div>
+        <h3>Build the LLM Context</h3>
+        <p>
+          RAG now combines the original user question with the retrieved
+          knowledge.
+        </p>
+      </div>
+    </div>
+
+    <div id="contextBox" class="context-box"></div>
+
+    <div class="callout">
+      Notice that the LLM normally receives the
+      <strong>actual retrieved text</strong>, not just the embedding vectors.
+      Embeddings were primarily used to find relevant information.
+    </div>
+
+    <div class="controls">
+      <button class="primary" onclick="generateAnswer()">
+        Send Context to LLM →
+      </button>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+
+  <section id="answerSection" class="card section hidden">
+    <div class="phase">Phase 4 · Generation</div>
+
+    <div class="section-title">
+      <div class="step">5</div>
+      <div>
+        <h3>LLM generates the final answer</h3>
+        <p>
+          The language model uses the user's question plus the retrieved
+          context to construct a natural-language response.
+        </p>
+      </div>
+    </div>
+
+    <div class="answer" id="finalAnswer"></div>
+  </section>
+
+  <section class="card concept">
+    <h2>The complete mental model</h2>
+
+    <p>
+      Remember RAG as two major pipelines:
+      <strong>Indexing</strong> prepares knowledge, while
+      <strong>Retrieval + Generation</strong> happens when a user asks a question.
+    </p>
+
+    <div class="concept-flow">
+      <span>📄 Documents</span>
+      <b>→</b>
+      <span>✂️ Chunking</span>
+      <b>→</b>
+      <span>🔢 Embeddings</span>
+      <b>→</b>
+      <span>🗄️ Vector DB</span>
+    </div>
+
+    <div class="concept-flow">
+      <span>❓ User Query</span>
+      <b>→</b>
+      <span>🔢 Query Embedding</span>
+      <b>→</b>
+      <span>🔍 Similarity Search</span>
+      <b>→</b>
+      <span>🏆 Top-K Chunks</span>
+      <b>→</b>
+      <span>🧠 LLM</span>
+      <b>→</b>
+      <span>💬 Answer</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  let chunks = [];
+  let vectors = [];
+  let retrieved = [];
+
+  function activateProgress(number) {
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById("prog" + i)
+        .classList.toggle("active", i <= number);
+    }
+  }
+
+  function activateNode(id) {
+    document.querySelectorAll(".pipe-node")
+      .forEach(node => node.classList.remove("active"));
+
+    document.getElementById(id).classList.add("active");
+  }
+
+  function createChunks() {
+    const text = document.getElementById("knowledge").value.trim();
+
+    if (!text) {
+      alert("Please add some knowledge-base content.");
+      return;
+    }
+
+    /*
+      Simple educational chunking:
+      split paragraphs first.
+    */
+    chunks = text
+      .split(/\n+/)
+      .map(x => x.trim())
+      .filter(Boolean);
+
+    const container = document.getElementById("chunks");
+    container.innerHTML = "";
+
+    chunks.forEach((chunk, index) => {
+      container.innerHTML += `
+        <div class="chunk">
+          <div class="chunk-head">
+            <span class="chunk-id">CHUNK ${index + 1}</span>
+          </div>
+          <p>${escapeHTML(chunk)}</p>
+        </div>
+      `;
+    });
+
+    document.getElementById("chunkSection").classList.remove("hidden");
+
+    activateProgress(1);
+    activateNode("node-chunk");
+  }
+
+  function generateEmbeddings() {
+    /*
+      These are fake vectors for demonstration.
+      We generate deterministic-looking numbers from text.
+    */
+
+    vectors = chunks.map(chunk => createFakeVector(chunk));
+
+    const container =
+      document.getElementById("embeddingChunks");
+
+    container.innerHTML = "";
+
+    chunks.forEach((chunk, index) => {
+      container.innerHTML += `
+        <div class="chunk">
+          <div class="chunk-head">
+            <span class="chunk-id">CHUNK ${index + 1}</span>
+          </div>
+
+          <p>${escapeHTML(chunk)}</p>
+
+          <div class="vector">
+            [${vectors[index].join(", ")}]
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById("embeddingSection")
+      .classList.remove("hidden");
+
+    activateProgress(2);
+    activateNode("node-vector");
+
+    scrollToElement("embeddingSection");
+  }
+
+  function storeVectors() {
+    document.getElementById("querySection")
+      .classList.remove("hidden");
+
+    activateNode("node-db");
+
+    scrollToElement("querySection");
+  }
+
+  function retrieveChunks() {
+    const query =
+      document.getElementById("query").value.trim();
+
+    if (!query) {
+      alert("Please enter a question.");
+      return;
+    }
+
+    const topK =
+      parseInt(document.getElementById("topK").value);
+
+    const queryVector = createFakeVector(query);
+
+    document.getElementById("queryVector").textContent =
+      "[" + queryVector.join(", ") + "]";
+
+    /*
+      Educational similarity simulation.
+
+      Instead of calculating real vector cosine similarity,
+      we calculate keyword overlap so that the demo behaves
+      intuitively in a browser without an embedding API.
+    */
+
+    const queryWords = tokenize(query);
+
+    const scored = chunks.map((chunk, index) => {
+      const chunkWords = tokenize(chunk);
+
+      let matches = 0;
+
+      queryWords.forEach(word => {
+        if (chunkWords.includes(word)) {
+          matches++;
+        }
+      });
+
+      let score =
+        queryWords.length
+          ? matches / queryWords.length
+          : 0;
+
+      // Small deterministic adjustment
+      score += pseudoRandom(chunk + query) * 0.12;
+
+      return {
+        index,
+        text: chunk,
+        score: Math.min(score, 0.99)
+      };
+    });
+
+    scored.sort((a, b) => b.score - a.score);
+
+    retrieved = scored.slice(
+      0,
+      Math.min(topK, scored.length)
+    );
+
+    const results =
+      document.getElementById("retrievalResults");
+
+    results.innerHTML = "";
+
+    retrieved.forEach((item, rank) => {
+      results.innerHTML += `
+        <div class="chunk retrieved">
+          <div class="chunk-head">
+            <span class="chunk-id">
+              #${rank + 1} · CHUNK ${item.index + 1}
+            </span>
+
+            <span class="score">
+              Similarity ${(item.score * 100).toFixed(1)}%
+            </span>
+          </div>
+
+          <p>${escapeHTML(item.text)}</p>
+        </div>
+      `;
+    });
+
+    document.getElementById("queryVectorArea")
+      .classList.remove("hidden");
+
+    buildContext(query);
+
+    activateProgress(3);
+  }
+
+  function buildContext(query) {
+    let context = `SYSTEM:
+Answer the user's question using the retrieved context below.
+
+RETRIEVED CONTEXT:
+`;
+
+    retrieved.forEach((item, index) => {
+      context += `
+[Chunk ${item.index + 1}]
+${item.text}
+`;
+    });
+
+    context += `
+USER QUESTION:
+${query}`;
+
+    document.getElementById("contextBox")
+      .textContent = context;
+
+    document.getElementById("contextSection")
+      .classList.remove("hidden");
+
+    setTimeout(() => {
+      scrollToElement("contextSection");
+    }, 200);
+  }
+
+  function generateAnswer() {
+    const query =
+      document.getElementById("query").value;
+
+    /*
+      This simulator does NOT call a real LLM.
+      It creates an illustrative answer using the
+      highest-ranked retrieved chunk.
+    */
+
+    const best =
+      retrieved.length
+        ? retrieved[0].text
+        : "No relevant context was retrieved.";
+
+    let answer;
+
+    if (
+      query.toLowerCase().includes("refund") &&
+      best.toLowerCase().includes("refund")
+    ) {
+      answer =
+        `Based on the retrieved knowledge, PayPal refunds can take approximately <strong>3–5 business days</strong> to appear. The exact timing can depend on the payment method and financial institution.`;
+    } else {
+      answer =
+        `The most relevant information retrieved from the knowledge base was: <strong>${escapeHTML(best)}</strong>`;
+    }
+
+    document.getElementById("finalAnswer")
+      .innerHTML = answer;
+
+    document.getElementById("answerSection")
+      .classList.remove("hidden");
+
+    activateProgress(4);
+
+    scrollToElement("answerSection");
+  }
+
+  function createFakeVector(text) {
+    const vector = [];
+
+    for (let i = 0; i < 8; i++) {
+      let hash = 0;
+
+      for (let j = 0; j < text.length; j++) {
+        hash =
+          ((hash << 5) - hash) +
+          text.charCodeAt(j) +
+          i * 31;
+
+        hash |= 0;
+      }
+
+      const value =
+        ((Math.abs(hash) % 2000) / 1000) - 1;
+
+      vector.push(value.toFixed(3));
+    }
+
+    return vector;
+  }
+
+  function tokenize(text) {
+    const stopWords = [
+      "the",
+      "a",
+      "an",
+      "is",
+      "are",
+      "to",
+      "does",
+      "do",
+      "how",
+      "what",
+      "of",
+      "and",
+      "in"
+    ];
+
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .split(/\s+/)
+      .filter(
+        word =>
+          word.length > 2 &&
+          !stopWords.includes(word)
+      );
+  }
+
+  function pseudoRandom(text) {
+    let hash = 0;
+
+    for (let i = 0; i < text.length; i++) {
+      hash =
+        ((hash << 5) - hash) +
+        text.charCodeAt(i);
+
+      hash |= 0;
+    }
+
+    return (Math.abs(hash) % 100) / 100;
+  }
+
+  function resetSimulator() {
+    chunks = [];
+    vectors = [];
+    retrieved = [];
+
+    [
+      "chunkSection",
+      "embeddingSection",
+      "querySection",
+      "queryVectorArea",
+      "contextSection",
+      "answerSection"
+    ].forEach(id => {
+      document.getElementById(id)
+        .classList.add("hidden");
+    });
+
+    document.querySelectorAll(".progress span")
+      .forEach(x => x.classList.remove("active"));
+
+    document.querySelectorAll(".pipe-node")
+      .forEach(x => x.classList.remove("active"));
+
+    activateNode("node-doc");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  function scrollToElement(id) {
+    document
+      .getElementById(id)
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+  }
+
+  function escapeHTML(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  activateNode("node-doc");
+</script>
+
+</body>
+</html>
